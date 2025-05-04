@@ -14,7 +14,7 @@ function App() {
   const [editMode,setEditMode] = useState(false);
   const [editableNote, setEditableNote] = useState(null);
 
-  
+
 
   const changeTitleHandler = (e) => {
     setNoteTitle(e.target.value);
@@ -27,16 +27,17 @@ function App() {
       return alert('Please provide a valid title');
      }
 
-     const newNote = {
+     editMode ? updateHandler() : createHandler();
+
+  };
+
+  const createHandler = () => {
+    const newNote = {
       id: Date.now() + "",
       title: noteTitle,
      };
-
-
-
 // ... = spread operator 
      setNotes([newNote, ...notes]);
-
 
   }
 
@@ -44,6 +45,25 @@ function App() {
     const updateNotes = notes.filter((item) => item.id !== noteId);
     setNotes(updateNotes);
      
+  };
+
+
+  const editHandler = (note) => {
+    setEditMode(true);
+    setEditableNote(note);
+    setNoteTitle(note.title);
+
+  };
+
+  const updateHandler = () => {
+    const updateNotes = notes.map((item) => {
+      if(item.id === editableNote.id){
+        return {...item , title : noteTitle}
+      }
+      return item;
+    });
+
+    setNotes(updateNotes);
   };
   
 
@@ -55,8 +75,7 @@ function App() {
      value={noteTitle}
      onChange={changeTitleHandler}
      />
-     <button type='submit'>Add Note</button>
-
+     <button type='submit'>{editMode ? "Update Note" : "Add Note"}</button>
       </form>
 
       <div className='note-list'>
@@ -67,7 +86,7 @@ function App() {
               <>
               <li> 
               <span>{note.title}</span>
-              <button>Edit</button>
+              <button onClick={() => editHandler(note)}>Edit</button>
               <button onClick={() => removeHandler(note.id)}>Delete</button>
               </li>
 
