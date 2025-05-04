@@ -6,51 +6,81 @@ import './App.css';
 
   
 function App() {
-  const[dynamicCounter1,setDynamicCounter1] = useState(20);
-  const[dynamicCounter2,setDynamicCounter2] = useState(15);
 
-  const increaseHandler1 = () => {
-    setDynamicCounter1(dynamicCounter1+1);
+  const [noteTitle,setNoteTitle] = useState("");
+  const [notes,setNotes] = useState([
+    {id:1, title :"Note 1" }
+  ]);
+  const [editMode,setEditMode] = useState(false);
+  const [editableNote, setEditableNote] = useState(null);
+
+  
+
+  const changeTitleHandler = (e) => {
+    setNoteTitle(e.target.value);
   };
 
-  const decreaseHandler1 = () => {
-   setDynamicCounter1(dynamicCounter1-1);
+  const submitHandler = (e) =>
+  {
+    e.preventDefault();
+     if(noteTitle.trim() === ''){
+      return alert('Please provide a valid title');
+     }
+
+     const newNote = {
+      id: Date.now() + "",
+      title: noteTitle,
+     };
+
+
+
+// ... = spread operator 
+     setNotes([newNote, ...notes]);
+
+
+  }
+
+  const removeHandler = (noteId) => {
+    const updateNotes = notes.filter((item) => item.id !== noteId);
+    setNotes(updateNotes);
+     
   };
-
-
-  const increaseHandler2 = () => {
-    setDynamicCounter2(dynamicCounter2+1);
-  };
-
-  const decreaseHandler2 = () => {
-   setDynamicCounter2(dynamicCounter2-1);
-  };
-
+  
 
   return (
     <div className="App">
+      <form onSubmit={submitHandler}>
+      <input 
+     type='text'
+     value={noteTitle}
+     onChange={changeTitleHandler}
+     />
+     <button type='submit'>Add Note</button>
 
-      <div className='counter-app-1'>
-      <p>The value of the counter is {dynamicCounter1}</p>
-      
-      <button onClick={increaseHandler1}>Increase By 1</button>
-      <button onClick={decreaseHandler1}>Decrease By 1</button>
-      </div>
+      </form>
 
-      <div className='counter-app-2'>
-      <p>The value of the counter is {dynamicCounter2}</p>
-      
-      <button onClick={increaseHandler2}>Increase By 1</button>
-      <button onClick={decreaseHandler2}>Decrease By 1</button>
-        
+      <div className='note-list'>
+        <h2>All Notes</h2>
+        <ul>
+          {
+            notes.map((note) => (
+              <>
+              <li> 
+              <span>{note.title}</span>
+              <button>Edit</button>
+              <button onClick={() => removeHandler(note.id)}>Delete</button>
+              </li>
+
+              <br />
+              </>              
+            ))
+          }
+
+        </ul>
+      </div>   
       </div>
-      
-      
-    </div>
 
   );
- 
-
 }
     
 export default App;
